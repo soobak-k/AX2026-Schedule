@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AX 2026 Schedule</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { margin: 0; background-color: #0C0F16; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- DEAN & SUSAN'S APP CODE START ---
+        const useState = React.useState;
+
+        const DEAN_COLOR = "#4A9EFF";
+        const SUSAN_COLOR = "#E879A0";
+        const BOTH_COLOR = "#2FE89A";
+        const FREE_COLOR = "#3A3F4B";
+        const PENDING_COLOR = "#F0A500";
+
+        const events = [
+          { start: "10:00 AM", end: "11:20 AM", startMin: 600, endMin: 680, title: "KyoAni — Sparks of Tomorrow U.S. Premiere", room: "JW Marriott Platinum Ballroom", who: "dean", note: null },
+          { start: "11:30 AM", end: "12:20 PM", startMin: 690, endMin: 740, title: "Sports Anime Festival!!!", room: "Room 408AB", who: "both", note: null },
+          { start: "12:30 PM", end: "1:50 PM", startMin: 750, endMin: 830, title: "Steel Ball Run JoJo's Bizarre Adventure Special Panel", room: "Crypto.com Arena (Main Events)", who: "dean", note: null },
+          { start: "1:30 PM", end: "2:30 PM", startMin: 810, endMin: 870, title: "Crunchyroll Showcase", room: "Peacock Theater", who: "susan", note: null },
+          { start: "3:00 PM", end: "4:20 PM", startMin: 900, endMin: 980, title: "A-1 Pictures Industry Panel", room: "JW Platinum", who: "dean", note: null },
+          { start: "4:30 PM", end: "5:00 PM", startMin: 990, endMin: 1020, title: "LADS", room: "TBD", who: "susan", pending: true, note: "⚠️ Conflicts with Kagurabachi (4:45 PM)" },
+          { start: "4:45 PM", end: "6:05 PM", startMin: 1005, endMin: 1085, title: "\"Kagurabachi\" Anime World Tour — World Premiere Screening", room: "JW Diamond", who: "both", note: "⚠️ Overlaps with Demon Slayer 5–6 PM & Susan's LADS" },
+          { start: "5:00 PM", end: "6:00 PM", startMin: 1020, endMin: 1080, title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle Celebration", room: "Peacock Theater", who: "both", note: "⚠️ Conflicts with Kagurabachi (4:45–6:05 PM)" },
+          { start: "6:45 PM", end: "8:05 PM", startMin: 1125, endMin: 1205, title: "Junji Ito Masterpiece Collection", room: "Room 411", who: "susan", note: null },
+          { start: "7:30 PM", end: "8:50 PM", startMin: 1170, endMin: 1250, title: "Cyberpunk: Edgerunners 2 — Welcome Back to Night City! (18+)", room: "Crypto.com Arena (Main Events)", who: "dean", note: null },
+          { start: "8:30 PM", end: "9:30 PM", startMin: 1230, endMin: 1290, title: "The Apothecary Diaries — Presented by Crunchyroll & NTV", room: "Peacock Theater", who: "susan", note: null }
+        ];
+
+        const whoConfig = {
+          dean: { label: "Dean", color: DEAN_COLOR, bg: "#0D1A2E" },
+          susan: { label: "Susan", color: SUSAN_COLOR, bg: "#2A0E1C" },
+          both: { label: "Both", color: BOTH_COLOR, bg: "#0A2018" },
+        };
+
+        function WhoTag({ who, pending }) {
+          if (pending) {
+            return (
+              <span style={{ background: PENDING_COLOR + "22", color: PENDING_COLOR, border: `1px solid ${PENDING_COLOR}55`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
+                Pending
+              </span>
+            );
+          }
+          const c = whoConfig[who];
+          return (
+            <span style={{ background: c.color + "22", color: c.color, border: `1px solid ${c.color}55`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
+              {c.label}
+            </span>
+          );
+        }
+
+        function EventCard({ event }) {
+          const [expanded, setExpanded] = useState(false);
+          const c = whoConfig[event.who];
+          const borderColor = event.pending ? PENDING_COLOR : c.color;
+
+          return (
+            <div
+              onClick={() => setExpanded(!expanded)}
+              style={{ background: "#161B24", border: `1px solid ${borderColor}44`, borderLeft: `3px solid ${borderColor}`, borderRadius: 8, padding: "12px 14px", cursor: "pointer", transition: "all 0.15s ease", marginBottom: 6 }}
+            >
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                <div style={{ minWidth: 90 }}>
+                  <div style={{ color: "#8892A4", fontSize: 11, fontWeight: 600 }}>{event.start}</div>
+                  <div style={{ color: "#4D5566", fontSize: 10 }}>→ {event.end}</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: "#E8EDF5", fontSize: 13, fontWeight: 600, lineHeight: 1.35, marginBottom: 4 }}>{event.title}</div>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                    <WhoTag who={event.who} pending={event.pending} />
+                    <span style={{ color: "#5A6478", fontSize: 11 }}>📍 {event.room}</span>
+                  </div>
+                  {event.note && expanded && (
+                    <div style={{ marginTop: 8, padding: "6px 10px", background: "#FF6B6B11", border: "1px solid #FF6B6B33", borderRadius: 4, color: "#FF8A8A", fontSize: 11, lineHeight: 1.4 }}>
+                      {event.note}
+                    </div>
+                  )}
+                  {event.note && !expanded && (
+                    <div style={{ marginTop: 4, color: "#FF8A8A", fontSize: 11 }}>⚠️ Conflict — tap to expand</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function FreeBlock({ from, to }) {
+          const dur = to - from;
+          if (dur <= 0) return null;
+          const hrs = Math.floor(dur / 60);
+          const mins = dur % 60;
+          const label = hrs > 0 ? `${hrs}h ${mins > 0 ? mins + "m" : ""}` : `${mins}m`;
+          return (
+            <div style={{ background: "#0E1117", border: "1px dashed #2D3344", borderRadius: 6, padding: "6px 14px", marginBottom: 6, display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#3A4155", fontSize: 18 }}>☕</span>
+              <span style={{ color: "#3A4155", fontSize: 11, fontWeight: 500 }}>FREE — {label} (food, merch, explore)</span>
+            </div>
+          );
+        }
+
+        function App() {
+          const [filter, setFilter] = useState("all");
+          const sortedEvents = [...events].sort((a, b) => a.startMin - b.startMin);
+          const filtered = filter === "all" ? sortedEvents : sortedEvents.filter((e) => e.who === filter || e.who === "both");
+
+          const timeline = [];
+          let lastEnd = 600;
+
+          for (const ev of filtered) {
+            if (ev.startMin > lastEnd + 5) {
+              timeline.push({ type: "free", from: lastEnd, to: ev.startMin });
+            }
+            timeline.push({ type: "event", data: ev });
+            if (ev.endMin > lastEnd) lastEnd = ev.endMin;
+          }
+
+          const legend = [
+            { label: "Dean", color: DEAN_COLOR },
+            { label: "Susan", color: SUSAN_COLOR },
+            { label: "Both", color: BOTH_COLOR },
+            { label: "Pending", color: PENDING_COLOR },
+          ];
+
+          return (
+            <div style={{ background: "#0C0F16", minHeight: "100vh", fontFamily: "sans-serif", padding: "24px 16px", maxWidth: 640, margin: "0 auto" }}>
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ color: "#4D5566", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Anime Expo 2026 · July 3 (Day 2)</div>
+                <div style={{ color: "#E8EDF5", fontSize: 22, fontWeight: 700, lineHeight: 1.2, marginBottom: 12 }}>Dean & Susan's Schedule</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
+                  {legend.map((l) => (
+                    <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 2, background: l.color }} />
+                      <span style={{ color: "#8892A4", fontSize: 11 }}>{l.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {[{ key: "all", label: "All Events" }, { key: "dean", label: "Dean" }, { key: "susan", label: "Susan" }].map((t) => (
+                    <button key={t.key} onClick={() => setFilter(t.key)} style={{ background: filter === t.key ? "#1E2535" : "transparent", border: `1px solid ${filter === t.key ? "#3A4560" : "#1E2535"}`, color: filter === t.key ? "#E8EDF5" : "#4D5566", borderRadius: 6, padding: "5px 12px", fontSize: 11, fontWeight: 600, cursor: "pointer" }}>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div style={{ background: "#1A0E0E", border: "1px solid #FF6B6B33", borderRadius: 8, padding: "10px 14px", marginBottom: 16, fontSize: 11, color: "#FF8A8A", lineHeight: 1.6 }}>
+                <strong style={{ color: "#FF6B6B" }}>⚠️ 3 Conflicts to resolve (4:30–6:05 PM)</strong><br />
+                • Dean: Kagurabachi vs. Demon Slayer overlap<br />
+                • Susan: LADS (pending) vs. Kagurabachi<br />
+                • Susan: Kagurabachi vs. Demon Slayer overlap
+              </div>
+              <div>
+                {timeline.map((item, i) => item.type === "free" ? <FreeBlock key={i} from={item.from} to={item.to} /> : <EventCard key={i} event={item.data} />)}
+              </div>
+            </div>
+          );
+        }
+
+        // Render the app into the root div
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
